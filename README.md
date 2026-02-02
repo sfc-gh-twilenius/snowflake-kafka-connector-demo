@@ -72,6 +72,45 @@ python financial_data_producer.py --rate 2
 
 ## Configuration
 
+### RSA Key Pair Setup
+
+The Snowflake Kafka Connector requires key-pair authentication. Follow these steps to set it up:
+
+**1. Generate an RSA key pair:**
+
+```bash
+# Create the .ssh directory if it doesn't exist
+mkdir -p ~/.ssh
+
+# Generate a 2048-bit RSA private key (unencrypted for connector use)
+openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out ~/.ssh/snowflake_rsa_key -nocrypt
+
+# Generate the public key from the private key
+openssl rsa -in ~/.ssh/snowflake_rsa_key -pubout -out ~/.ssh/snowflake_rsa_key.pub
+
+# Set appropriate permissions on the private key
+chmod 600 ~/.ssh/snowflake_rsa_key
+```
+
+**2. Get the public key content (without headers):**
+
+```bash
+grep -v "PUBLIC KEY" ~/.ssh/snowflake_rsa_key.pub | tr -d '\n'
+```
+
+**3. Assign the public key to your Snowflake user:**
+
+```sql
+ALTER USER <YOUR_USERNAME> SET RSA_PUBLIC_KEY='<paste_public_key_content_here>';
+```
+
+**4. Verify key-pair authentication works:**
+
+```sql
+DESCRIBE USER <YOUR_USERNAME>;
+-- Check that RSA_PUBLIC_KEY_FP shows a fingerprint
+```
+
 ### Snowflake Connection
 
 Edit `register_connector.sh` to update:
@@ -82,7 +121,7 @@ SNOWFLAKE_USER="<YOUR_USERNAME>"
 SNOWFLAKE_ROLE="<YOUR_ROLE>"  # e.g., ACCOUNTADMIN
 ```
 
-The connector uses the RSA key at `~/.ssh/snowflake_rsa_key` for authentication.
+The connector reads the RSA private key from `~/.ssh/snowflake_rsa_key`.
 
 ### Connector Properties
 
