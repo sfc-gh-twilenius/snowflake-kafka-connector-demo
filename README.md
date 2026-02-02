@@ -77,8 +77,9 @@ python financial_data_producer.py --rate 2
 Edit `register_connector.sh` to update:
 
 ```bash
-SNOWFLAKE_URL="sfseeurope-eu-demo241.snowflakecomputing.com"  # org-account format
-SNOWFLAKE_USER="your_username"
+SNOWFLAKE_URL="<YOUR_ORG>-<YOUR_ACCOUNT>.snowflakecomputing.com"  # org-account format
+SNOWFLAKE_USER="<YOUR_USERNAME>"
+SNOWFLAKE_ROLE="<YOUR_ROLE>"  # e.g., ACCOUNTADMIN
 ```
 
 The connector uses the RSA key at `~/.ssh/snowflake_rsa_key` for authentication.
@@ -90,7 +91,7 @@ Key settings in the connector configuration:
 | Property | Value | Description |
 |----------|-------|-------------|
 | `snowflake.ingestion.method` | `SNOWPIPE_STREAMING` | Uses streaming ingest API |
-| `snowflake.role.name` | `ACCOUNTADMIN` | Role for ingestion |
+| `snowflake.role.name` | `<YOUR_ROLE>` | Role for ingestion |
 | `buffer.flush.time` | `10` | Flush interval in seconds |
 | `buffer.count.records` | `100` | Records before flush |
 

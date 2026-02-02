@@ -9,9 +9,14 @@ cd "$SCRIPT_DIR"
 # Read the private key from existing Snow CLI config location
 PRIVATE_KEY=$(cat ~/.ssh/snowflake_rsa_key | grep -v "PRIVATE KEY" | tr -d '\n')
 
-# Snowflake account details - using org-account format with dashes (underscores can cause issues)
-SNOWFLAKE_URL="sfseeurope-eu-demo241.snowflakecomputing.com"
-SNOWFLAKE_USER="teiko"
+# =============================================================================
+# CONFIGURE THESE VALUES FOR YOUR SNOWFLAKE ACCOUNT
+# =============================================================================
+# URL format: <orgname>-<accountname>.snowflakecomputing.com
+# Example: myorg-myaccount.snowflakecomputing.com
+SNOWFLAKE_URL="<YOUR_ORG>-<YOUR_ACCOUNT>.snowflakecomputing.com"
+SNOWFLAKE_USER="<YOUR_USERNAME>"
+SNOWFLAKE_ROLE="<YOUR_ROLE>"  # e.g., ACCOUNTADMIN or a custom role with required privileges
 
 echo "Waiting for Kafka Connect to be ready..."
 MAX_ATTEMPTS=60
@@ -52,7 +57,7 @@ curl -X POST http://localhost:8083/connectors \
         "snowflake.private.key": "'"${PRIVATE_KEY}"'",
         "snowflake.database.name": "KAFKA_DEMO",
         "snowflake.schema.name": "FINANCIAL_DATA",
-        "snowflake.role.name": "ACCOUNTADMIN",
+        "snowflake.role.name": "'"${SNOWFLAKE_ROLE}"'",
         "snowflake.topic2table.map": "financial_transactions:RAW_FINANCIAL_TRANSACTIONS",
         "key.converter": "org.apache.kafka.connect.storage.StringConverter",
         "value.converter": "org.apache.kafka.connect.json.JsonConverter",
