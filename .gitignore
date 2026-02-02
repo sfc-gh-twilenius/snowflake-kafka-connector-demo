@@ -1,0 +1,27 @@
+# Secrets and credentials
+secrets/*.p8
+secrets/*.pem
+secrets/*.key
+*.p8
+*.pem
+
+# Environment files
+.env
+.env.*
+*.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
